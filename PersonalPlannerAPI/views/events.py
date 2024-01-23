@@ -38,7 +38,7 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = [
             "id",
-            "user"
+            "user",
             "title",
             "description",
             "date",
@@ -47,7 +47,8 @@ class EventSerializer(serializers.ModelSerializer):
             "city",
             "state",
             "address",
-            "zipcode"
+            "zipcode", 
+            "is_owner"
         ]
 
         extra_kwargs = {"description": {"required": False}}

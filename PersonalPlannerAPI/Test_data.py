@@ -26,3 +26,18 @@ Category
 {
     "label": "outdoor",
 }
+
+Events
+
+{
+  "user": 1,
+  "category": 1,
+  "title": "Sample Event",
+  "description": "This is a sample event description.",
+  "date": "2024-01-26",
+  "start_datetime": "2024-01-26",
+  "city": "Sample City",
+  "state": "Sample State",
+  "address": "123 Sample St",
+  "zipcode": 12345
+}
