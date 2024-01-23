@@ -98,3 +98,44 @@ class EventViewSet(viewsets.ViewSet):
 
         serializer = EventSerializer(event, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def update(self, request, pk=None, *args, **kwargs):
+        try:
+            event = Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            return Response({"detail": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update the fields as needed
+        event.title = request.data.get("title", event.title)
+        event.start_datetime = request.data.get("start_datetime", event.start_datetime)
+        event.description = request.data.get("description", event.description)
+        event.date = request.data.get("date", event.date)
+        event.city = request.data.get("city", event.city)
+        event.address = request.data.get("address", event.address)
+        event.state = request.data.get("state", event.state)
+        event.zipcode = request.data.get("zipcode", event.zipcode)
+        
+        category_id = request.data.get("category")
+        if category_id:
+            try:
+                category = Category.objects.get(pk=category_id)
+                event.category = category
+            except Category.DoesNotExist:
+                return Response({"detail": "Category not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Save the updated event
+        event.save()
+
+        serializer = EventSerializer(event, context={"request": request})
+        return Response(serializer.data)
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        try:
+            event = Event.objects.get(pk=pk)
+        except Event.DoesNotExist:
+            return Response({"detail": "Event not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Delete the event
+        event.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
