@@ -1,9 +1,10 @@
 from django.db import models
+from .category import Category
 
 class Event(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey("PPUser", on_delete=models.CASCADE)
-    category = models.ForeignKey("Category", on_delete=models.CASCADE)
+    category = models.ForeignKey("Category", on_delete=models.CASCADE, related_name="events" )
     title = models.CharField(max_length=255)
     description = models.TextField()
     date = models.DateField()
