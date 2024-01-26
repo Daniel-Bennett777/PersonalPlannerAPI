@@ -21,7 +21,7 @@ from PersonalPlannerAPI.views import (PPUserViewSet)
 router = DefaultRouter(trailing_slash=False)
 urlpatterns = [
     path("", include(router.urls)),
-    path("login", PPUserViewSet.as_view({"post": "user_login"}), name="login"),
+    path("login", PPUserViewSet.as_view({"post": "login_user"}), name="login"),
     path(
         "register", PPUserViewSet.as_view({"post": "register_account"}), name="register"
     ),

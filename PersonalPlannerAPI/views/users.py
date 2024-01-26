@@ -14,10 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
 class PPUserSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    
     class Meta:
         model = PPUser
-        fields = ( 'city', 'state', 'address', 'zipcode', 'user')
+        fields = ( 'city', 'state', 'address', 'zipcode')
 
 class PPUserViewSet(viewsets.ViewSet):
     queryset = User.objects.all()
