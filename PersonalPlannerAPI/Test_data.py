@@ -27,7 +27,7 @@ Category
     "label": "outdoor",
 }
 
-Events
+Create Events
 
 {
   "user": 1,
@@ -40,4 +40,19 @@ Events
   "state": "Sample State",
   "address": "123 Sample St",
   "zipcode": 12345
+}
+
+Update of Events
+
+{
+  "user": 1,
+  "category": 3,
+  "title": "1111",
+  "description": "11111",
+  "date": "2024-01-26",
+  "start_datetime": "2024-01-26",
+  "city": "Nashvegas",
+  "state": "TN",
+  "address": "1234 Sample St",
+  "zipcode": 11111
 }
