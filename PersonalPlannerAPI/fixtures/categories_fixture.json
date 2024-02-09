@@ -1,0 +1,51 @@
+[
+    {
+        "model": "PersonalPlannerAPI.category",
+        "pk": 1,
+        "fields": {
+            "label": "Sports"
+        }
+    },
+    {
+        "model": "PersonalPlannerAPI.category",
+        "pk": 2,
+        "fields": {
+            "label": "Restaurants"
+        }
+    },
+    {
+        "model": "PersonalPlannerAPI.category",
+        "pk": 3,
+        "fields": {
+            "label": "Parks"
+        }
+    },
+    {
+        "model": "PersonalPlannerAPI.category",
+        "pk": 4,
+        "fields": {
+            "label": "Outdoors"
+        }
+    },
+    {
+        "model": "PersonalPlannerAPI.category",
+        "pk": 5,
+        "fields": {
+            "label": "Music"
+        }
+    },
+    {
+        "model": "PersonalPlannerAPI.category",
+        "pk": 6,
+        "fields": {
+            "label": "Vacations"
+        }
+    },
+    {
+        "model": "PersonalPlannerAPI.category",
+        "pk": 7,
+        "fields": {
+            "label": "Appointment"
+        }
+    }
+]
