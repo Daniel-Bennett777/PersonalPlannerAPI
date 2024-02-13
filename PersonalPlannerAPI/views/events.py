@@ -1,30 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework import serializers
-# from django.contrib.auth.models import User
 from PersonalPlannerAPI.models import Category, Event, PPUser
 from .users import PPUserSerializer
 from .category import CategorySerializer
 from rest_framework import permissions
-
-# class SimplePostSerializer(serializers.ModelSerializer):
-
-    
-#     class Meta:
-#         model = Event
-#         fields = [
-#             "title",
-#             "description",
-#             "date",
-#             "category",
-#             "start_datetime",
-#             "city",
-#             "state",
-#             "address",
-#             "zipcode"
-#         ],
-
-
 
 class EventSerializer(serializers.ModelSerializer):
     user = PPUserSerializer(many=False)
@@ -39,20 +19,21 @@ class EventSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
+            "category",
             "title",
             "description",
-            "date",
-            "category",
-            "start_datetime",
+            "date_posted",
+            "event_date",  # Changed from "date"
+            "event_time",  # New field for time
             "city",
             "state",
             "address",
-            "zipcode", 
+            "zipcode",
             "is_owner"
         ]
 
-        extra_kwargs = {"description": {"required": False}}
-        
+        extra_kwargs = {"description": {"required": False}, "date_posted": {"read_only": True}}
+
 class EventViewSet(viewsets.ViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -75,9 +56,9 @@ class EventViewSet(viewsets.ViewSet):
         category_id = request.data.get("category")
         category = Category.objects.get(pk=category_id)
         title = request.data.get("title")
-        start_datetime = request.data.get("start_datetime")
+        event_date = request.data.get("event_date")  # Changed from "date"
+        event_time = request.data.get("event_time")  # New field for time
         description = request.data.get("description")
-        date = request.data.get("date")
         city = request.data.get("city")
         address = request.data.get("address")
         state = request.data.get("state")
@@ -86,9 +67,9 @@ class EventViewSet(viewsets.ViewSet):
         event = Event.objects.create(
             user=user,
             title=title,
-            start_datetime=start_datetime,
+            event_date=event_date,
+            event_time=event_time,
             description=description,
-            date=date,
             category=category,
             city=city,
             state=state,
@@ -107,14 +88,14 @@ class EventViewSet(viewsets.ViewSet):
 
         # Update the fields as needed
         event.title = request.data.get("title", event.title)
-        event.start_datetime = request.data.get("start_datetime", event.start_datetime)
+        event.event_date = request.data.get("event_date", event.event_date)  # Changed from "date"
+        event.event_time = request.data.get("event_time", event.event_time)  # New field for time
         event.description = request.data.get("description", event.description)
-        event.date = request.data.get("date", event.date)
         event.city = request.data.get("city", event.city)
         event.address = request.data.get("address", event.address)
         event.state = request.data.get("state", event.state)
         event.zipcode = request.data.get("zipcode", event.zipcode)
-        
+
         category_id = request.data.get("category")
         if category_id:
             try:
