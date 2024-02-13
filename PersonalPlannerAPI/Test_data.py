@@ -30,12 +30,11 @@ Category
 Create Events
 
 {
-  "user": 1,
   "category": 1,
-  "title": "Sample Event",
+  "title": "punching Event",
   "description": "This is a sample event description.",
-  "date": "2024-01-26",
-  "start_datetime": "2024-01-26",
+  "event_date": "2024-05-26",
+  "event_time": "12:00:00",
   "city": "Sample City",
   "state": "Sample State",
   "address": "123 Sample St",
