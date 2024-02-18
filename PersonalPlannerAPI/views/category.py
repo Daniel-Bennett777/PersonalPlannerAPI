@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework import serializers
 from rest_framework.response import Response
 from PersonalPlannerAPI.models import Category
+from rest_framework.permissions import AllowAny 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +11,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class CategoryViewSet(viewsets.ViewSet):
+    permission_classes = [AllowAny]
+    
     def list(self, request):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)

@@ -5,6 +5,7 @@ from PersonalPlannerAPI.models import Category, Event, PPUser
 from .users import PPUserSerializer
 from .category import CategorySerializer
 from rest_framework import permissions
+from rest_framework.permissions import AllowAny 
 
 class EventSerializer(serializers.ModelSerializer):
     user = PPUserSerializer(many=False)
@@ -35,7 +36,8 @@ class EventSerializer(serializers.ModelSerializer):
         extra_kwargs = {"description": {"required": False}, "date_posted": {"read_only": True}}
 
 class EventViewSet(viewsets.ViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def list(self, request):
         events = Event.objects.all()
