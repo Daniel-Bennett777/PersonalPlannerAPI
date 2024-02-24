@@ -17,7 +17,7 @@ class PPUserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = PPUser
-        fields = ( 'city', 'state', 'address', 'zipcode')
+        fields = ( 'id','city', 'state', 'address', 'zipcode')
 
 class PPUserViewSet(viewsets.ViewSet):
     queryset = User.objects.all()
