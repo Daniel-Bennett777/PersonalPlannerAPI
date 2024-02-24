@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework import serializers
+from rest_framework.decorators import action
 from PersonalPlannerAPI.models import Category, Event, PPUser
 from .users import PPUserSerializer
 from .category import CategorySerializer
@@ -8,9 +9,10 @@ from rest_framework import permissions
 from rest_framework.permissions import AllowAny 
 
 class EventSerializer(serializers.ModelSerializer):
-    user = PPUserSerializer(many=False)
+    user = serializers.PrimaryKeyRelatedField(queryset=PPUser.objects.all())
     is_owner = serializers.SerializerMethodField()
     category = CategorySerializer(many=False)
+    attendees = PPUserSerializer(many=True, read_only=True)
 
     def get_is_owner(self, obj):
         return self.context["request"].user == obj.user.user
@@ -30,7 +32,8 @@ class EventSerializer(serializers.ModelSerializer):
             "state",
             "address",
             "zipcode",
-            "is_owner"
+            "is_owner",
+            "attendees" 
         ]
 
         extra_kwargs = {"description": {"required": False}, "date_posted": {"read_only": True}}
@@ -122,3 +125,31 @@ class EventViewSet(viewsets.ViewSet):
         event.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    @action(detail=True, methods=['patch'])
+    def rsvp(self, request, pk=None):
+        try:
+            event = Event.objects.get(pk=pk)
+            user = request.user.pp_user
+
+            # Check if the user has already RSVP'd
+            if user in event.attendees.all():
+                return Response({"detail": "User has already RSVP'd to this event"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Add user to attendees with ppuser.id
+            attendee_data = {
+                'id': user.id,  # assuming user.id is the ppuser.id
+                'city': user.city,
+                'state': user.state,
+                'address': user.address,
+                'zipcode': user.zipcode,
+            }
+
+            event.attendees.add(user)
+            event.save()
+
+            # Fetch updated event details with attendees data
+            updated_event = Event.objects.get(pk=pk)
+            serializer = EventSerializer(updated_event, context={"request": request})
+            return Response(serializer.data)
+        except Event.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
