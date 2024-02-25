@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework.decorators import action
@@ -158,3 +159,11 @@ class EventViewSet(viewsets.ViewSet):
             return Response(serializer.data)
         except Event.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    @action(detail=False, methods=['get'])
+    def list_user_events(self, request):
+        user = request.auth.user
+        pp_user = get_object_or_404(PPUser, user=user)
+        events = Event.objects.filter(user=pp_user)
+        serializer = EventSerializer(events, many=True, context={"request": request})
+        return Response(serializer.data)
