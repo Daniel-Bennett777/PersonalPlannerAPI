@@ -13,6 +13,10 @@ class EventSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     category = CategorySerializer(many=False)
     attendees = PPUserSerializer(many=True, read_only=True)
+    attendees_count = serializers.SerializerMethodField()
+    
+    def get_attendees_count(self, obj):
+        return obj.attendees.count()
 
     def get_is_owner(self, obj):
         return self.context["request"].user == obj.user.user
@@ -33,7 +37,8 @@ class EventSerializer(serializers.ModelSerializer):
             "address",
             "zipcode",
             "is_owner",
-            "attendees" 
+            "attendees",
+            "attendees_count"
         ]
 
         extra_kwargs = {"description": {"required": False}, "date_posted": {"read_only": True}}
