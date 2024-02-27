@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.response import Response
 from rest_framework import serializers
 from rest_framework.decorators import action
@@ -165,5 +165,15 @@ class EventViewSet(viewsets.ViewSet):
         user = request.auth.user
         pp_user = get_object_or_404(PPUser, user=user)
         events = Event.objects.filter(user=pp_user)
+        serializer = EventSerializer(events, many=True, context={"request": request})
+        return Response(serializer.data)
+    @action(detail=False, methods=['get'])
+    def list_by_category(self, request):
+        category_id = request.query_params.get('category_id')
+        if category_id is None:
+            return Response({"error": "Category ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Fetch events based on the selected category
+        events = get_list_or_404(Event, category__id=category_id)
         serializer = EventSerializer(events, many=True, context={"request": request})
         return Response(serializer.data)
