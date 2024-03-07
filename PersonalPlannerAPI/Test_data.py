@@ -1,4 +1,4 @@
-User
+# User
 
 !!!register
 
@@ -21,13 +21,13 @@ User
     "password": "your_password"
 }
 
-Category
+# Category
 
 {
     "label": "outdoor",
 }
 
-Create Events
+# Create Events
 
 {
   "category": 1,
@@ -41,7 +41,7 @@ Create Events
   "zipcode": 12345
 }
 
-Update of Events
+# Update of Events
 
 {
   "user": 1,
@@ -54,4 +54,26 @@ Update of Events
   "state": "TN",
   "address": "1234 Sample St",
   "zipcode": 11111
+}
+
+# get all, get id of PPusers
+# http://localhost:8000/ppusers
+# http://localhost:8000/ppusers/3
+
+
+# structure of Update of PPusers -pending
+{
+    "id": 3,
+    "user": {
+        "id": 3,
+        # only include username if updating to new value
+        "username": "michelle", 
+        "first_name": "Chelle",
+        "last_name": "Totherow",
+        "email": "michelle@email.com"
+    },
+    "city": "Madison",
+    "state": "TN",
+    "address": "2134 this address",
+    "zipcode": 37115
 }
