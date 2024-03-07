@@ -60,29 +60,20 @@
 # http://localhost:8000/ppusers
 # http://localhost:8000/ppusers/3
 
-#current ppuser structure returned from Postman
-{
-    "id": 2,
-    "city": "YourCity",
-    "state": "YourState",
-    "address": "YourAddress",
-    "zipcode": 12346
-}
 
 
-# wanted structure of PPusers -pending - issue with register when user added to ppuser serializer
+# structure of PPusers for PUT
 {
-    "id": 3,
+    "id": 1,
     "user": {
-        "id": 3,
-        # only include username if updating to new value
-        "username": "michelle", 
-        "first_name": "Chelle",
-        "last_name": "Totherow",
-        "email": "michelle@email.com"
+        "id": 1,
+        "username": "user1",
+        "first_name": "User123",
+        "last_name": "One",
+        "email": "user1@example.com"
     },
-    "city": "Madison",
-    "state": "TN",
-    "address": "2134 this address",
-    "zipcode": 37115
+    "city": "City1",
+    "state": "State1",
+    "address": "Address1",
+    "zipcode": 12345
 }
