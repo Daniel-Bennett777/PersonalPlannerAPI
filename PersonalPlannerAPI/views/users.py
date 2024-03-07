@@ -14,15 +14,28 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
 class PPUserSerializer(serializers.ModelSerializer):
-    
+    user = UserSerializer()
     class Meta:
         model = PPUser
-        fields = ( 'id','city', 'state', 'address', 'zipcode')
+        fields = ( 'id','user','city', 'state', 'address', 'zipcode')
 
 class PPUserViewSet(viewsets.ViewSet):
     queryset = User.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = UserSerializer
+    
+    def list(self, request):
+        pp_users = PPUser.objects.all()
+        serializer = PPUserSerializer(pp_users, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def retrieve(self, request, pk=None):
+        try:
+            pp_user_instance = PPUser.objects.get(pk=pk)
+            serializer = PPUserSerializer(pp_user_instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except PPUser.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['post'], url_path='register')
     def register_account(self, request):

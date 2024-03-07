@@ -25,6 +25,9 @@ from PersonalPlannerAPI.views import (
 router = DefaultRouter(trailing_slash=False)
 router.register(r"categories", CategoryViewSet, basename="category")
 router.register(r"events", EventViewSet, basename="event")
+router.register(r"ppusers", PPUserViewSet, basename="ppuser") 
+ 
+
 urlpatterns = [
     path("", include(router.urls)),
     path("login", PPUserViewSet.as_view({"post": "login_user"}), name="login"),
