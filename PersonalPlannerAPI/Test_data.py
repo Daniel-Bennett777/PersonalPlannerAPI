@@ -60,8 +60,17 @@
 # http://localhost:8000/ppusers
 # http://localhost:8000/ppusers/3
 
+#current ppuser structure returned from Postman
+{
+    "id": 2,
+    "city": "YourCity",
+    "state": "YourState",
+    "address": "YourAddress",
+    "zipcode": 12346
+}
 
-# structure of Update of PPusers -pending
+
+# wanted structure of PPusers -pending - issue with register when user added to ppuser serializer
 {
     "id": 3,
     "user": {
