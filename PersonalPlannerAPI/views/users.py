@@ -14,16 +14,17 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
 class PPUserSerializer(serializers.ModelSerializer):
-    # user = UserSerializer()
+    user = UserSerializer()
     class Meta:
         model = PPUser
-        fields = ('id', 'city', 'state', 'address', 'zipcode')
-        #fields = ('id','user','city', 'state', 'address', 'zipcode')
+     
+        fields = ('id','user','city', 'state', 'address', 'zipcode')
 
 class PPUserViewSet(viewsets.ViewSet):
-    queryset = User.objects.all()
+    queryset = PPUser.objects.all()
     permission_classes = [permissions.AllowAny]
-    serializer_class = UserSerializer
+    serializer_class = PPUserSerializer
+
 
     @action(detail=False, methods=['post'], url_path='register')
     def register_account(self, request):
@@ -60,12 +61,7 @@ class PPUserViewSet(viewsets.ViewSet):
                 'zipcode': pp_user.zipcode,
             }
 
-            pp_user_serializer = PPUserSerializer(data=request.data, context={"request": request})
-            if pp_user_serializer.is_valid():
-                return Response(data, status=status.HTTP_201_CREATED)
-
-            user.delete()
-            return Response({'error': 'Failed to serialize PPUser'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data, status=status.HTTP_201_CREATED)
 
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -142,3 +138,24 @@ class PPUserViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except PPUser.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    def update(self, request, pk=None):
+        try:
+            pp_user_instance = PPUser.objects.get(pk=pk)
+        except PPUser.DoesNotExist:
+            return Response({"error": "PPUser not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        user_data = request.data.pop('user', {})  # Extract user data if provided
+        user_instance = pp_user_instance.user
+        user_serializer = UserSerializer(user_instance, data=user_data, partial=True)
+        if user_serializer.is_valid():
+            user_serializer.save()
+
+        pp_user_serializer = PPUserSerializer(pp_user_instance, data=request.data, partial=True)
+        if pp_user_serializer.is_valid():
+            pp_user_serializer.save()
+            return Response(pp_user_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(pp_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+   
