@@ -157,5 +157,15 @@ class PPUserViewSet(viewsets.ViewSet):
             return Response(pp_user_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(pp_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+    
+    
+    def destroy(self, request, pk=None):
+        try:
+            pp_user_instance = PPUser.objects.get(pk=pk)
+            user_instance = pp_user_instance.user
+            user_instance.delete()  # Delete associated user
+            pp_user_instance.delete()  # Delete PPUser
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except PPUser.DoesNotExist:
+            return Response({"error": "PPUser not found"}, status=status.HTTP_404_NOT_FOUND)   
    
