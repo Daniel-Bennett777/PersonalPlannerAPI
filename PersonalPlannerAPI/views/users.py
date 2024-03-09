@@ -166,15 +166,6 @@ class PPUserViewSet(viewsets.ViewSet):
         else:
             return Response(pp_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
           
-    def destroy(self, request, pk=None):
-    try:
-        pp_user_instance = PPUser.objects.get(pk=pk)
-        user_instance = pp_user_instance.user
-        user_instance.delete()  # Delete associated user
-        pp_user_instance.delete()  # Delete PPUser
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    except PPUser.DoesNotExist:
-        return Response({"error": "PPUser not found"}, status=status.HTTP_404_NOT_FOUND)   
         
     @action(detail=True, methods=['patch'], url_path='add-profile-picture')
     def add_profile_picture(self, request, pk=None):
@@ -204,5 +195,15 @@ class PPUserViewSet(viewsets.ViewSet):
         profile_picture_url = pp_user_instance.profile_picture.url if pp_user_instance.profile_picture else None
         return Response({"profile_picture": profile_picture_url}, status=status.HTTP_200_OK)
     
+    def destroy(self, request, pk=None):
+        try:
+            pp_user_instance = PPUser.objects.get(pk=pk)
+            user_instance = pp_user_instance.user
+            user_instance.delete()  # Delete associated user
+            pp_user_instance.delete()  # Delete PPUser
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except PPUser.DoesNotExist:
+            return Response({"error": "PPUser not found"}, status=status.HTTP_404_NOT_FOUND)   
+
+        
     
-   
