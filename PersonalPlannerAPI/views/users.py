@@ -15,15 +15,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 class PPUserSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
     class Meta:
         model = PPUser
      
-        fields = ('id','user','city', 'state', 'address', 'zipcode')
+        fields = ('id','user','city', 'state', 'address', 'zipcode', 'profile_picture')
 
 class PPUserViewSet(viewsets.ViewSet):
     queryset = PPUser.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = PPUserSerializer
+    
+    def get_object(self):
+        # This assumes that you are using the 'pk' parameter for lookup.
+        pk = self.kwargs.get('pk')
+        return PPUser.objects.get(pk=pk)
 
 
     @action(detail=False, methods=['post'], url_path='register')
@@ -43,7 +49,8 @@ class PPUserViewSet(viewsets.ViewSet):
                 state=request.data.get('state', ''),
                 address=request.data.get('address', ''),
                 zipcode=request.data.get('zipcode', ''),
-                user=user
+                user=user,
+                profile_picture=request.data.get('profile_picture', None)
             )
             token, created = Token.objects.get_or_create(user=user)
 
@@ -59,6 +66,7 @@ class PPUserViewSet(viewsets.ViewSet):
                 'state': pp_user.state,
                 'address': pp_user.address,
                 'zipcode': pp_user.zipcode,
+                'profile_picture': pp_user.profile_picture.url if pp_user.profile_picture else None
             }
 
             return Response(data, status=status.HTTP_201_CREATED)
@@ -157,15 +165,44 @@ class PPUserViewSet(viewsets.ViewSet):
             return Response(pp_user_serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(pp_user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+          
     def destroy(self, request, pk=None):
+    try:
+        pp_user_instance = PPUser.objects.get(pk=pk)
+        user_instance = pp_user_instance.user
+        user_instance.delete()  # Delete associated user
+        pp_user_instance.delete()  # Delete PPUser
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    except PPUser.DoesNotExist:
+        return Response({"error": "PPUser not found"}, status=status.HTTP_404_NOT_FOUND)   
+        
+    @action(detail=True, methods=['patch'], url_path='add-profile-picture')
+    def add_profile_picture(self, request, pk=None):
         try:
             pp_user_instance = PPUser.objects.get(pk=pk)
-            user_instance = pp_user_instance.user
-            user_instance.delete()  # Delete associated user
-            pp_user_instance.delete()  # Delete PPUser
-            return Response(status=status.HTTP_204_NO_CONTENT)
         except PPUser.DoesNotExist:
-            return Response({"error": "PPUser not found"}, status=status.HTTP_404_NOT_FOUND)   
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        profile_picture = request.data.get('profile_picture')
+
+        if profile_picture:
+            pp_user_instance.profile_picture = profile_picture
+            pp_user_instance.save()
+            serializer = PPUserSerializer(pp_user_instance)
+            print("Updated PPUser:", serializer.data)  # Add this line for debugging
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Profile picture data not provided'}, status=status.HTTP_400_BAD_REQUEST) 
+        
+    @action(detail=True, methods=["get"], url_path="profile-picture")
+    def get_profile_picture(self, request, pk=None):
+        try:
+            pp_user_instance = PPUser.objects.get(pk=pk)
+        except PPUser.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        profile_picture_url = pp_user_instance.profile_picture.url if pp_user_instance.profile_picture else None
+        return Response({"profile_picture": profile_picture_url}, status=status.HTTP_200_OK)
+    
+    
    
