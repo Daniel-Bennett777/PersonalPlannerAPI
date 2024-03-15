@@ -54,7 +54,7 @@ class EventTests(APITestCase):
 
     def test_update_event(self):
         # Ensure we can update an existing event
-        event_id = Event.objects.first().id  
+        event_id = Event.objects.first().id
         url = f"/events/{event_id}"
         data = {
             'title': 'Updated Event',
