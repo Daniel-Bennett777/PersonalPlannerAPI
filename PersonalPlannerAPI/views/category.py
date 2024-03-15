@@ -40,7 +40,7 @@ class CategoryViewSet(viewsets.ViewSet):
             serializer = CategorySerializer(category, data=request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(None, status.HTTP_204_NO_CONTENT)
+                return Response(serializer.data, status.HTTP_200_OK)
 
             return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
